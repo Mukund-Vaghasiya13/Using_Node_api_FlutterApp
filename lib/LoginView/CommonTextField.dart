@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todoapp/homeScreen.dart';
 
 import '../DecoractionAndComman.dart';
 import '../Modle.dart';
@@ -42,6 +43,7 @@ class _MyLoginFormState extends State<MyLoginForm> {
               if (value!.isEmpty) {
                 return "Value is empety";
               }
+              return null;
             },
             onSaved: (newValue) {
               setState(() {
@@ -61,6 +63,7 @@ class _MyLoginFormState extends State<MyLoginForm> {
               if (value!.isEmpty) {
                 return "Value is empety";
               }
+              return null;
             },
             onSaved: (newValue) {
               setState(() {
@@ -86,11 +89,27 @@ class _MyLoginFormState extends State<MyLoginForm> {
               onTap: () async {
                 if (keys.currentState!.validate()) {
                   keys.currentState!.save();
+                  const Map<String, String> header = {
+                   'Content-type': 'application/json',
+                   };
                   var url = Uri.parse(widget.Endpoint ?? "");
-                  var response = await http.post(url,
-                      body: {"Username": username, "Password": password});
+                  var response = await http.post(url,headers: header,
+                      body: jsonEncode({"Username": username.toString(), "Password": password.toString()}));
                   var json = jsonDecode(response.body);
                   print(json);
+                  if(json["message"] == "Login Successfull"){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+                  }else if(json["message"] == "Login Successfull"){
+                    //AlertDailog
+                    showDialog(context: context, builder: (context){
+                      return AlertDialog(
+                        title: Text(json["message"]),
+                      );
+                    });
+                  }else{
+                    //MAKR: Server Problem alert
+
+                  }
                 }
               },
               child: Container(
