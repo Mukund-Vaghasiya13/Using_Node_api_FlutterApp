@@ -1,0 +1,3 @@
+enum TExtFieldType{
+  secure,notsecure
+}
