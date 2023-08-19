@@ -26,7 +26,7 @@ class _SinUPViewState extends State<SinUPView> {
             children: [
               Image.network("https://static.vecteezy.com/system/resources/previews/005/879/539/original/cloud-computing-modern-flat-concept-for-web-banner-design-man-enters-password-and-login-to-access-cloud-storage-for-uploading-and-processing-files-illustration-with-isolated-people-scene-free-vector.jpg"),
               SizedBox(height: 20,),
-              MyLoginForm(ButtonTitle: "Sinup",),
+              MyLoginForm(ButtonTitle: "Sinup",Endpoint: "https://todo-api-3m2q.onrender.com/Todoapp/post/user",),
               SizedBox(height: 20,),
               TextButton(onPressed: (){
                 Navigator.pop(context);
