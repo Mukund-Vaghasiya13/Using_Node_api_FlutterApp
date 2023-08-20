@@ -28,6 +28,7 @@ class _SplaceScreenState extends State<SplaceScreen> {
     var login = prefs!.getBool("isLogin");
     Timer(Duration(seconds: 3), (){
       if(login ?? false){
+        print( prefs!.getString("Username"));
          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
       }else{
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginView()));

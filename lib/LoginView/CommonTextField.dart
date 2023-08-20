@@ -24,6 +24,7 @@ class _MyLoginFormState extends State<MyLoginForm> {
   var username = "";
   var password = "";
   SharedPreferences? prefs;
+  var processingClick = true;
 
   var keys = GlobalKey<FormState>();
   @override
@@ -91,7 +92,11 @@ class _MyLoginFormState extends State<MyLoginForm> {
               onTap: () async {
                 if (keys.currentState!.validate()) {
                   keys.currentState!.save();
-                  LoginAndsinupLogic();
+                  if(processingClick)
+                  {
+                    LoginAndsinupLogic();
+                    
+                  }
                 }
               },
               child: Container(
@@ -100,7 +105,7 @@ class _MyLoginFormState extends State<MyLoginForm> {
                 child: Center(
                   child: Text(
                     widget.ButtonTitle ?? "nil",
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 20,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
@@ -115,6 +120,7 @@ class _MyLoginFormState extends State<MyLoginForm> {
   }
 
   void LoginAndsinupLogic() async {
+    processingClick = false;
     var json = await APiParshing().PostRequest(Url: widget.Endpoint,e: {"Username":username.toString(),"Password":password.toString()});
     print(json);
     if (json["message"] == "Login Successfull" ||
