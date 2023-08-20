@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/Modle/Modle.dart';
 
 import 'DecoractionAndComman.dart';
 import 'LoginView/LoginView.dart';
@@ -15,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   SharedPreferences? prefs;
-  
+   DataModle? items;
   
     @override
   void initState() {
@@ -29,9 +30,11 @@ class _HomePageState extends State<HomePage> {
     String? Username;
     Username = prefs!.getString("Username");
     var json = await APiParshing().Getrequest(Url: "https://todo-api-3m2q.onrender.com/user/data/get/$Username");
-    print(json);
+    setState(() {
+      items = DataModle.fromjson(json);
+      print(items!.Task!);
+    });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,12 +49,20 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [IconButton(onPressed: () {}, icon: const Icon(CupertinoIcons.add))],
       ),
-      body: const SafeArea(
+      body:  SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            children: [],
-          ),
+          padding:  EdgeInsets.all(15.0),
+          child:  items == null ? Center(child: CircularProgressIndicator(),) : 
+            ListView.builder(
+              itemCount: items?.Task!.length ?? 0,
+              itemBuilder: (context,i){
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(items!.Task![i]),
+                  ),
+                );
+            })
         ),
       ),
       drawer: const CoustomWidget(),
