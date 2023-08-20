@@ -44,5 +44,16 @@ class APiParshing{
     return json;
   }
 
+  Future<dynamic> Getrequest({String? Url}) async{
+    const Map<String, String> header = {
+      'Content-type': 'application/json',
+    };
+    var url = Uri.parse(Url ?? "");
+    var response = await http.get(url);
+    var json = jsonDecode(response.body);
+    return json;
+  }
+
+
 
 }

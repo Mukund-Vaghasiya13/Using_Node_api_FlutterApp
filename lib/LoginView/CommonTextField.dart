@@ -103,13 +103,13 @@ class _MyLoginFormState extends State<MyLoginForm> {
                 height: 40,
                 width: 100,
                 child: Center(
-                  child: Text(
+                  child: processingClick ? Text(
                     widget.ButtonTitle ?? "nil",
                     style: const TextStyle(
                         fontSize: 20,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
-                  ),
+                  ):CupertinoActivityIndicator(color: Colors.white70,),
                 ),
               ),
             ),
@@ -120,7 +120,9 @@ class _MyLoginFormState extends State<MyLoginForm> {
   }
 
   void LoginAndsinupLogic() async {
-    processingClick = false;
+    setState(() {
+       processingClick = false;
+    });
     var json = await APiParshing().PostRequest(Url: widget.Endpoint,e: {"Username":username.toString(),"Password":password.toString()});
     print(json);
     if (json["message"] == "Login Successfull" ||
@@ -132,6 +134,9 @@ class _MyLoginFormState extends State<MyLoginForm> {
           context, MaterialPageRoute(builder: (context) => HomePage()));
     } else if (json["message"] == "Invalid LoginDetails" ||
         json["message"] == "Username taken") {
+          setState(() {
+             processingClick = true;
+          });
       //AlertDailog
        showDialog(
           context: context,
@@ -147,6 +152,9 @@ class _MyLoginFormState extends State<MyLoginForm> {
           });
     } else {
       //MAKR: Server Problem alert
+       setState(() {
+             processingClick = true;
+        });
     }
   }
 }

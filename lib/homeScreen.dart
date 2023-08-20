@@ -4,17 +4,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'DecoractionAndComman.dart';
 import 'LoginView/LoginView.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  SharedPreferences? prefs;
+  
+  
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    GetData();
+  }
+
+  void GetData()async{
+    prefs = await SharedPreferences.getInstance();
+    String? Username;
+    Username = prefs!.getString("Username");
+    var json = await APiParshing().Getrequest(Url: "https://todo-api-3m2q.onrender.com/user/data/get/$Username");
+    print(json);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-//
+//Drawer
 class CoustomWidget extends StatefulWidget {
   const CoustomWidget({
     super.key,
