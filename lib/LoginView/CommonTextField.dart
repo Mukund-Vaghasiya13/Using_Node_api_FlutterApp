@@ -1,15 +1,16 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/homeScreen.dart';
-
 import '../DecoractionAndComman.dart';
-import '../Modle.dart';
-import 'package:http/http.dart' as http;
+import '../Modle/Modle.dart';
+
+
 
 // ignore: must_be_immutable
 class MyLoginForm extends StatefulWidget {
+  
   String? ButtonTitle;
   String? Endpoint;
 
@@ -22,6 +23,7 @@ class MyLoginForm extends StatefulWidget {
 class _MyLoginFormState extends State<MyLoginForm> {
   var username = "";
   var password = "";
+  SharedPreferences? prefs;
 
   var keys = GlobalKey<FormState>();
   @override
@@ -113,26 +115,19 @@ class _MyLoginFormState extends State<MyLoginForm> {
   }
 
   void LoginAndsinupLogic() async {
-    const Map<String, String> header = {
-      'Content-type': 'application/json',
-    };
-    var url = Uri.parse(widget.Endpoint ?? "");
-    var response = await http.post(url,
-        headers: header,
-        body: jsonEncode({
-          "Username": username.toString(),
-          "Password": password.toString()
-        }));
-    var json = jsonDecode(response.body);
+    var json = await APiParshing().PostRequest(Url: widget.Endpoint,e: {"Username":username.toString(),"Password":password.toString()});
     print(json);
     if (json["message"] == "Login Successfull" ||
         json["message"] == "Signup Successfully") {
-      Navigator.push(
+        prefs = await SharedPreferences.getInstance();
+        prefs!.setBool("isLogin", true);
+        prefs!.setString("Username", username);
+      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
-    } else if (json["message"] == "Login Successfull" ||
+    } else if (json["message"] == "Invalid LoginDetails" ||
         json["message"] == "Username taken") {
       //AlertDailog
-      showDialog(
+       showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(

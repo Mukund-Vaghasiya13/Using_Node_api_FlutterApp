@@ -1,8 +1,9 @@
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-import 'Modle.dart';
-
+import 'Modle/Modle.dart';
 
 class DecoratedField{
  
@@ -29,3 +30,19 @@ class DecoratedField{
   }
 }
 
+class APiParshing{
+
+  Future<dynamic> PostRequest({String? Url,Map<String,String>? e}) async{
+    const Map<String, String> header = {
+      'Content-type': 'application/json',
+    };
+    var url = Uri.parse(Url ?? "");
+    var response = await http.post(url,
+        headers: header,
+        body: jsonEncode(e));
+    var json = jsonDecode(response.body);
+    return json;
+  }
+
+
+}

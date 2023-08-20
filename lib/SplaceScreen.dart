@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/homeScreen.dart';
 
 
 import 'LoginView/LoginView.dart';
@@ -13,14 +15,26 @@ class SplaceScreen extends StatefulWidget {
 }
 
 class _SplaceScreenState extends State<SplaceScreen> {
+   SharedPreferences? prefs;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(Duration(seconds: 3), (){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginView()));
-     });
+    LoginNAvigate();
   }
+
+  void LoginNAvigate()async{
+     prefs = await SharedPreferences.getInstance();
+    var login = prefs!.getBool("isLogin");
+    Timer(Duration(seconds: 3), (){
+      if(login ?? false){
+         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+      }else{
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginView()));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
