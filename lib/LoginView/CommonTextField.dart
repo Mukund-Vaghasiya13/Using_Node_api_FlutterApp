@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,11 +5,8 @@ import 'package:todoapp/homeScreen.dart';
 import '../DecoractionAndComman.dart';
 import '../Modle/Modle.dart';
 
-
-
 // ignore: must_be_immutable
 class MyLoginForm extends StatefulWidget {
-  
   String? ButtonTitle;
   String? Endpoint;
 
@@ -92,10 +88,8 @@ class _MyLoginFormState extends State<MyLoginForm> {
               onTap: () async {
                 if (keys.currentState!.validate()) {
                   keys.currentState!.save();
-                  if(processingClick)
-                  {
+                  if (processingClick) {
                     LoginAndsinupLogic();
-                    
                   }
                 }
               },
@@ -103,13 +97,17 @@ class _MyLoginFormState extends State<MyLoginForm> {
                 height: 40,
                 width: 100,
                 child: Center(
-                  child: processingClick ? Text(
-                    widget.ButtonTitle ?? "nil",
-                    style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ):CupertinoActivityIndicator(color: Colors.white70,),
+                  child: processingClick
+                      ? Text(
+                          widget.ButtonTitle ?? "nil",
+                          style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        )
+                      : CupertinoActivityIndicator(
+                          color: Colors.white70,
+                        ),
                 ),
               ),
             ),
@@ -121,40 +119,47 @@ class _MyLoginFormState extends State<MyLoginForm> {
 
   void LoginAndsinupLogic() async {
     setState(() {
-       processingClick = false;
+      processingClick = false;
     });
-    var json = await APiParshing().PostRequest(Url: widget.Endpoint,e: {"Username":username.toString(),"Password":password.toString()});
+    var json = await APiParshing().PostRequest(
+        Url: widget.Endpoint,
+        e: {"Username": username.toString(), "Password": password.toString()});
     print(json);
     if (json["message"] == "Login Successfull" ||
         json["message"] == "Signup Successfully") {
-        prefs = await SharedPreferences.getInstance();
-        prefs!.setBool("isLogin", true);
-        prefs!.setString("Username", username);
+      prefs = await SharedPreferences.getInstance();
+      prefs!.setBool("isLogin", true);
+      prefs!.setString("Username", username);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     } else if (json["message"] == "Invalid LoginDetails" ||
         json["message"] == "Username taken") {
-          setState(() {
-             processingClick = true;
-          });
-      //AlertDailog
-       showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(json["message"]),
-              actions: [
-                TextButton(onPressed: (){
-                  Navigator.pop(context);
-                }, child: Text("Ok"))
-              ],
-            );
-          });
+      setState(() {
+        processingClick = true;
+      });
+      ShowAlertDailogBox(json["message"]);
     } else {
       //MAKR: Server Problem alert
-       setState(() {
-             processingClick = true;
-        });
+      setState(() {
+        processingClick = true;
+      });
     }
+  }
+
+  void ShowAlertDailogBox(String? message) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(message!),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Ok"))
+            ],
+          );
+        });
   }
 }
